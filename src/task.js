@@ -10,121 +10,119 @@ import Mailer from './mailer';
  * and sends all the users with given location a good morning mail
  */
 const executeJob = () => {
-  
+
   const db = new DbModel();
   const timeZoneModel = new TimeZoneModel(db.getDb());
 
   timeZoneModel.getOffsets()
-  .then((data)=>{
-    let offsetArray = data;
-    let filteredOffsetArray =[];
+    .then((data) => {
+      let offsetArray = data;
+      let filteredOffsetArray = [];
 
-    if(!offsetArray || offsetArray.length ==0)
-    throw("No offset defined halting scheduler")
+      if (!offsetArray || offsetArray.length == 0)
+        throw ("No offset defined halting scheduler")
 
-    offsetArray.forEach((utcOffset)=>{
+      offsetArray.forEach((utcOffset) => {
 
-      let currentTime = filterOffsets(utcOffset.offset);
-      //if(currentTime.hh==7 && currentTime.mm > 55 && currentTime.mm < 59)
-      filteredOffsetArray.push(utcOffset.offsetId);
+        let currentTime = filterOffsets(utcOffset.offset);
+        if(currentTime.hh==8 && currentTime.mm < 1)
+        filteredOffsetArray.push(utcOffset.offsetId);
+      })
+
+      return filteredOffsetArray;
+
     })
+    .then((filteredOffsetArray) => {
 
-    return filteredOffsetArray;
-    
-  })
-  .then((filteredOffsetArray)=> {
+      if (!filteredOffsetArray || filteredOffsetArray.length == 0)
+        throw ("Its too early or Late !!!!");
 
-    if( !filteredOffsetArray || filteredOffsetArray.length ==0)
-    throw("No time zone has 8 AM locally");
+      const locationModel = new LocationModel(db.getDb());
 
-    const locationModel = new LocationModel(db.getDb());
+      return locationModel.getlocations(filteredOffsetArray);
 
-    return locationModel.getlocations(filteredOffsetArray); 
-
-  })
-  .then((data)=>{
-
-    let locationArray=[];
-
-    data.forEach((location)=>{
-      locationArray.push(location.countryId);
     })
+    .then((data) => {
 
-    if( !locationArray || locationArray.length ==0)
-    throw("No country with given offset");
+      let locationArray = [];
 
-    let userModel = new UserModel(db.getDb());
+      data.forEach((location) => {
+        locationArray.push(location.countryId);
+      })
 
-    return userModel.getusers(locationArray); 
- 
-  })
-  .then((data)=>{
-    let promiserray =[];
-    let usersArray = data;
+      if (!locationArray || locationArray.length == 0)
+        throw ("No country with given offset");
 
-    if( !usersArray || usersArray.length ==0)
-    throw("No users in given location");
+      let userModel = new UserModel(db.getDb());
 
-    let mailer = new Mailer();
+      return userModel.getusers(locationArray);
 
-    usersArray.forEach((user)=>{
-
-      promiserray.push(mailer.sendEmail(user));
-       
     })
+    .then((data) => {
+      let promiserray = [];
+      let usersArray = data;
 
-    return Promise.all(promiserray.map((promise)=>{
+      if (!usersArray || usersArray.length == 0)
+        throw ("No users in given location");
 
-      return promise
-      .then((p)=> p)
-      .catch((e)=> e)
+      let mailer = new Mailer();
 
-    }));
-  })
-  .then((result)=>{
-    console.log("Mail report :",result);
-    db.closeDb();
-  })
-  .catch((err)=>{
-    db.closeDb();
-    console.log("Error:",err); 
-  })
+      usersArray.forEach((user) => {
+
+        promiserray.push(mailer.sendEmail(user));
+
+      })
+
+      return Promise.all(promiserray.map((promise) => {
+        return promise
+          .then((p) => p)
+          .catch((e) => e)
+
+      }));
+    })
+    .then((result) => {
+      console.log("Mail report :", result);
+      db.closeDb();
+    })
+    .catch((error) => {
+      db.closeDb();
+      console.log("Error:", error);
+    })
 
 }
 
 /**
- * 
- * This function calculates trget country local time
- * given its UTC offset
+ * This function calculates trget country local time given its UTC offset.
+ * @param {String} timeOffset UTC time offset of country
+ * @returns {Object} An object with current hour and minutes in given country
  * 
  */
 const filterOffsets = (timeOffset) => {
 
-    let date = new Date();
+  let date = new Date();
 
-    let utcTime = date.getTime() + (date.getTimezoneOffset() * 60000); 
+  let utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
 
-    let sign = timeOffset[0];
-    let hoursMinute= timeOffset.substring(1).split(":");
-    let hrs= hoursMinute[0];
-    let min= hoursMinute[1];
+  let sign = timeOffset[0];
+  let hoursMinute = timeOffset.substring(1).split(":");
+  let hrs = hoursMinute[0];
+  let min = hoursMinute[1];
 
-    let offsetInMilliseconds = (hrs*3600 + min*60)*1000;
+  let offsetInMilliseconds = (hrs * 3600 + min * 60) * 1000;
 
-    let offset = (sign == "+") ? offsetInMilliseconds : -offsetInMilliseconds;
+  let offset = (sign == "+") ? offsetInMilliseconds : -offsetInMilliseconds;
 
-    let CountryTime = new Date(utcTime + offset); 
+  let CountryTime = new Date(utcTime + offset);
 
-    let hour = CountryTime.getHours();
-    let minutes = CountryTime.getMinutes();
+  let hour = CountryTime.getHours();
+  let minutes = CountryTime.getMinutes();
 
-    return  {
-     "hh": hour,
-     "mm": minutes
-    };
+  return {
+    "hh": hour,
+    "mm": minutes
+  };
 
 
 }
 
 export default executeJob;
-

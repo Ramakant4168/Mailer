@@ -1,4 +1,4 @@
-import schedule from'node-schedule';
+import schedule from 'node-schedule';
 import executeJob from './task';
 
 /**
@@ -6,6 +6,5 @@ import executeJob from './task';
  *  UTC offset is multiple of 15
  */
 schedule.scheduleJob('*/5 * * * * *', () => {
-  console.log('The answer to life, the universe, and everything!');
   executeJob();
 });

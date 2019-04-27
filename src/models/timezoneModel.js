@@ -1,16 +1,29 @@
-
 import Sequelize from 'sequelize';
 
-class TimeZoneModel{
+/**
+ * Class defining the UTC offsets 
+ */
+class TimeZoneModel {
 
+    /**
+     * Constructor  
+     * @return {Object}
+     * Instance of this class
+     */
     constructor(db) {
         this.db = db;
         this.timeZoneModel = this.defineSchema();
     }
 
+    /**
+     * Create the location schema
+     *
+     * @return {Object}
+     * Model of location
+     */
     defineSchema() {
         const model = this.db.define('timezone', {
-            
+
             offsetId: {
                 allowNull: false,
                 primaryKey: true,
@@ -33,31 +46,36 @@ class TimeZoneModel{
                 defaultValue: Sequelize.NOW,
                 field: 'updated_at',
             },
-        },  
-        {
+        }, {
             tableName: 'timezone'
         });
         return model;
     }
 
-    getOffsets(){
+    /**
+     * DB access to get UTC offsets 
+     *
+     * @returns {Promise} Promise after getting offsets.
+     */
+    getOffsets() {
 
         return this.timeZoneModel
-        .findAll({
-            attributes: { exclude: ['created_at'] }
-        })
-        .then((data)=>{
-        return data;
-        })
-        .catch((err)=>{
+            .findAll({
+                attributes: {
+                    exclude: ['created_at']
+                }
+            })
+            .then((data) => {
+                return data;
+            })
+            .catch((err) => {
 
-            console.log("operation failed for timezone offset retrieval");
-            console.log(err);
-        })
-  
+                console.log("operation failed for timezone offset retrieval");
+                console.log(err);
+            })
+
     }
 
 }
 
 export default TimeZoneModel;
-

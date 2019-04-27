@@ -1,7 +1,19 @@
 {
-    "db":{ 
-        "database":"InFeedo",
-        "user":"root",
-        "password":"rkv4168"
+    "db": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "database": "InFeedo",
+        "dialect": "mysql",
+        "maxPoolSize": 5,
+        "minPoolSize": 0,
+        "user": "root",
+        "password": "rkv4168"
+    },
+    "mailer": {
+        "service": "gmail",
+        "user": "ram4168@gmail.com",
+        "pass": "zmjxwclcrcrwkidm",
+        "subject": "Greetings",
+        "MessageBody": "Good Morning !!!"
     }
 }

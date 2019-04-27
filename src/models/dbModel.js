@@ -1,34 +1,49 @@
-
 import Sequelize from 'sequelize';
 import config from '../../config.json';
 
-class ServiceModal{
+/**
+ * Class defining the database utilities
+ */
+class ServiceModal {
 
-  constructor(){
+  /**
+   * Constructor Initializes Db connection 
+   * @return {Object}
+   * Instance of this class
+   */
+  constructor() {
 
-     this.sequelize = new Sequelize(
-       config.db.database,
-       config.db.user,
-       config.db.password, 
-       {
-        host: '127.0.0.1',
-        port:3306,
-        dialect: 'mysql',
+    this.sequelize = new Sequelize(
+      config.db.database,
+      config.db.user,
+      config.db.password, {
+        host: config.db.host,
+        port: config.db.port,
+        dialect: config.db.dialect,
         operatorsAliases: false,
 
         pool: {
-          max: 5,
-          min: 0,
+          max: config.db.maxPoolSize,
+          min: config.db.mminPoolSize,
           acquire: 30000,
           idle: 10000
         },
-    });
+      });
   }
 
-  getDb(){
+  /**
+   * Returns instance of the db object
+   *
+   * @return {object}
+   * sequelize db instance
+   */
+  getDb() {
     return this.sequelize;
   }
 
+  /**
+   * Closes the db connection.
+   */
   closeDb() {
     this.sequelize.close();
   }
@@ -36,4 +51,3 @@ class ServiceModal{
 }
 
 export default ServiceModal;
-
