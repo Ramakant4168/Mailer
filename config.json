@@ -7,12 +7,12 @@
         "maxPoolSize": 5,
         "minPoolSize": 0,
         "user": "root",
-        "password": "rkv4168"
+        "password": "password"
     },
     "mailer": {
         "service": "gmail",
-        "user": "ram4168@gmail.com",
-        "pass": "ezpixyvgkvjlkagx",
+        "user": "user@gmail.com",
+        "pass": "************",
         "subject": "Greetings",
         "MessageBody": "Good Morning !!!"
     }
