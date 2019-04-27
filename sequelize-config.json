@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "rkv4168",
+    "password": "password",
     "database": "infeedo",
     "host": "127.0.0.1",
     "dialect": "mysql"
