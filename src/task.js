@@ -25,7 +25,8 @@ const executeJob = () => {
       offsetArray.forEach((utcOffset) => {
 
         let currentTime = filterOffsets(utcOffset.offset);
-        if(currentTime.hh==8 && currentTime.mm < 1)
+ 
+        if(currentTime.hh==8 && currentTime.mm < 2)
         filteredOffsetArray.push(utcOffset.offsetId);
       })
 
