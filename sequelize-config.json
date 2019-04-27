@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "rkv4168",
+    "database": "infeedo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "infeedo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "infeedo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
